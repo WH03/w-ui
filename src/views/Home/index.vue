@@ -1,4 +1,4 @@
- <template>
+<template>
   <a-layout>
     <a-layout-header class="header">
       <div class="logo">
@@ -10,7 +10,7 @@
         <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
           <a-menu-item key="1">
             <PieChartOutlined />
-            <span>Option 1</span>
+            <span>绘制图形</span>
           </a-menu-item>
           <a-menu-item key="2">
             <DesktopOutlined />
@@ -41,6 +41,8 @@
             <FileOutlined />
             <span>File</span>
           </a-menu-item>
+
+
         </a-menu>
       </a-layout-sider>
 
@@ -50,14 +52,12 @@
           <a-breadcrumb-item>List</a-breadcrumb-item>
           <a-breadcrumb-item>App</a-breadcrumb-item>
         </a-breadcrumb>
-        <a-layout-content
-          :style="{
-            background: '#fff',
-            padding: '24px',
-            margin: 0,
-            minHeight: '280px',
-          }"
-        >
+        <a-layout-content :style="{
+          background: '#fff',
+          padding: '24px',
+          margin: 0,
+          minHeight: '280px',
+        }">
           Content
         </a-layout-content>
       </a-layout>
@@ -65,43 +65,58 @@
   </a-layout>
 </template>
 <script setup>
-import { ref } from "vue";
-import {
-  UserOutlined,
-  PieChartOutlined,
-  DesktopOutlined,
-  TeamOutlined,
-  FileOutlined,
-} from "@ant-design/icons-vue";
-const selectedKeys1 = ref(["2"]);
-const selectedKeys2 = ref(["1"]);
-const openKeys = ref(["sub1"]);
-const collapsed = ref(false);
+  import { ref, reactive } from "vue";
+  import {
+    UserOutlined,
+    PieChartOutlined,
+    DesktopOutlined,
+    TeamOutlined,
+    FileOutlined,
+  } from "@ant-design/icons-vue";
+  const selectedKeys1 = ref(["2"]);
+  const selectedKeys2 = ref(["1"]);
+  const openKeys = ref(["sub1"]);
+  const collapsed = ref(false);
+
+  const menuList = reactive([
+    {
+      id: 1,
+      key: '/',
+      title: '首页',
+      children: [
+        {
+          id: '1-1',
+          key: '/graph',
+          title: "绘制图形"
+        }
+      ]
+    }
+
+  ])
+
 </script>
 <style lang="scss" scoped>
-@import "@/style/style.scss";
-@import "@/style/utils.scss";
-.ant-layout {
-  .header {
-    display: flex;
-    align-items: center;
-    background-color: #0a1936;
-  }
-  .logo {
-    width: 50px;
-    height: 50px;
-    img {
-      width: 100%;
+  @import "@/style/style.scss";
+  @import "@/style/utils.scss";
+
+  .ant-layout {
+    .header {
+      display: flex;
+      align-items: center;
+      background-color: #0a1936;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+
+      img {
+        width: 100%;
+      }
+    }
+
+    .ant-layout-content {
+      height: 100vh;
     }
   }
-  .ant-layout-content {
-    height: 100vh;
-  }
-}
-
-// :deep(.ant-layout) .ant-layout-sider-trigger {
-//   background-color: #fff;
-//   color: #002140;
-//   border: 1px solid #002140;
-// }
 </style>

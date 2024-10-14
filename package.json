@@ -1,5 +1,5 @@
 {
-  "name": "w-ui",
+  "name": "vue-vite-project",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,7 +12,8 @@
     "@ant-design/icons-vue": "^7.0.1",
     "ant-design-vue": "^4.2.5",
     "unplugin-vue-components": "^0.27.4",
-    "vue": "^3.4.29"
+    "vue": "^3.4.29",
+    "vue-router": "^4.4.5"
   },
   "devDependencies": {
     "@types/node": "^22.7.0",

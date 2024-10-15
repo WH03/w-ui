@@ -18,8 +18,10 @@
   "devDependencies": {
     "@types/node": "^22.7.0",
     "@vitejs/plugin-vue": "^5.0.5",
+    "cesium": "^1.122.0",
     "sass": "^1.79.3",
     "sass-loader": "^16.0.2",
-    "vite": "^5.3.1"
+    "vite": "^5.4.9",
+    "vite-plugin-cesium": "^1.2.23"
   }
 }

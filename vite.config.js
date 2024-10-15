@@ -1,7 +1,11 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import Components from "unplugin-vue-components/vite";
+// ant design vue按需加载
 import { AntDesignVueResolver } from "unplugin-vue-components/resolvers";
+
+// 导入cesium插件
+import cesium from 'vite-plugin-cesium';
 
 // 引入resolve
 import { resolve } from "path";
@@ -16,6 +20,7 @@ export default defineConfig({
         }),
       ],
     }),
+    cesium()
   ],
   resolve: {
     // 设置路径别名

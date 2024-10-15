@@ -17,11 +17,6 @@
         }))
 
 
-
-
-
-
-
         //返回的是笛卡尔坐标   经纬度转笛卡尔坐标
         //经度 纬度 高度
         //响水县坐标
@@ -39,14 +34,8 @@
             infoBox: false, //是否显示点击要素之后显示的信息
             homeButton: false, //是否显示Home按钮
 
-            baseLayer: esri,
-
             //自定义图层
-            // baseLayer: new Cesium.ImageryLayer(new Cesium.UrlTemplateImageryProvider({
-            //     url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
-            //     minimumLevel: 1,
-            //     maximumLevel: 18
-            // })),
+            baseLayer: esri,
 
             terrain: Cesium.Terrain.fromWorldTerrain({
                 requestWaterMask: true,//水面特效

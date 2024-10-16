@@ -3,25 +3,29 @@
     <a-layout-header class="header">
       <div class="logo">
         <img src="./assets/vue.svg" alt="" />
+
       </div>
     </a-layout-header>
     <a-layout>
       <a-layout-sider v-model:collapsed="collapsed" collapsible>
         <a-menu v-model:selectedKeys="selectedKeys" @click="clickMenu" theme="dark" mode="inline">
-
           <template v-for="item in menuList">
-            <template v-if="!item.children">
+            <template v-if="!item.children.length">
               <a-menu-item :key="item.path">
                 <router-link :to="item.path">
                   <PieChartOutlined />
-                  <span> {{ item.title }}</span>
+                  <span> {{ item.meta.title }}</span>
                 </router-link>
               </a-menu-item>
             </template>
 
             <template v-else>
-              <a-sub-menu :key="item.path" :menu-info="item" />
+              <a-sub-menu v-for="val in item.children" :key="item.path" :menu-info="item">
+                <PieChartOutlined />
+                <span> {{ val.meta.title }}</span>
+              </a-sub-menu>
             </template>
+
           </template>
 
         </a-menu>
@@ -45,8 +49,8 @@
   </a-layout>
 </template>
 <script setup>
-  import { ref, reactive } from "vue";
-  import { useRoute } from 'vue-router'
+  import { ref, reactive, onMounted } from "vue";
+  import { useRouter } from 'vue-router'
   import {
     UserOutlined,
     PieChartOutlined,
@@ -54,43 +58,18 @@
     TeamOutlined,
     FileOutlined,
   } from "@ant-design/icons-vue";
+  // 获取所有路由信息
+  let menuList = reactive([])
+  const router = useRouter()
 
-  const selectedKeys = ref(['/graph']);
-  // const openKeys = ref(['sub1']);
-
-  const route = useRoute()
-  // console.log('@@@route.matched：', route.matched);
-  // const current = [route.path]
-  let current = ref('/graph')
-
-  // console.log('@@@current：', current);
-
+  menuList = router.getRoutes()
+  const selectedKeys = ref([menuList[0].path]);
+  let current = ref(menuList[0].path)
   const collapsed = ref(false);
 
-  const menuList = reactive([
-    {
-      key: '1',
-      path: '/graph',
-      title: "绘制图形"
-    },
-    {
-      key: '2',
-      path: '/model',
-      title: "引入模型"
-    },
-    {
-      key: '3',
-      path: '/3333',
-      title: "33333"
-    }
-  ])
-
   function clickMenu(item) {
-    console.log('@@@item', item);
     current.value = item.key
   }
-
-
 
 </script>
 <style lang="scss" scoped>

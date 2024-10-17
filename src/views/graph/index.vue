@@ -6,19 +6,31 @@
                 <a-button type="primary" @click="drawLine">画线</a-button>
                 <a-button type="primary" @click="drawPlane">画面</a-button>
                 <a-button type="primary" @click="drawRectangle">创建矩形</a-button>
-                <a-button type="primary" @click="drawCorridorEntity">创建管道</a-button>
+                <a-button type="primary" @click="drawCorridor">创建管道</a-button>
                 <a-button type="primary" @click="drawSphere">创建球体</a-button>
                 <a-button type="primary" @click="drawBox">创建立方体</a-button>
                 <a-button type="primary" @click="drawCone">创建圆锥体</a-button>
                 <a-button type="primary" @click="drawWall">创建墙体</a-button>
-
+            </a-space>
+            <p></p>
+            <a-space wrap>
+                <a-button type="primary" danger @click="removePoint">删除点</a-button>
+                <a-button type="primary" danger @click="removeLine">删除线</a-button>
+                <a-button type="primary" danger @click="removePlane">删除面 </a-button>
+                <a-button type="primary" danger @click="removeRectangle">删除矩形</a-button>
+                <a-button type="primary" danger @click="removeCorridor">删除管道</a-button>
+                <a-button type="primary" danger @click="removeSphere">删除球体</a-button>
+                <a-button type="primary" danger @click="removeBox">删除立方体</a-button>
+                <a-button type="primary" danger @click="removeCone">删除圆锥体</a-button>
+                <a-button type="primary" danger @click="removeWall">删除墙体</a-button>
+                <a-button type="primary" danger @click="removeAll">删除所有</a-button>
             </a-space>
         </div>
     </div>
 </template>
 
 <script setup>
-    import { ref, onMounted } from "vue";
+    import { ref, onMounted, reactive } from "vue";
     import * as Cesium from "cesium";
     let token = [
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzNGE4MDJhMy1kNTRlLTQzM2YtYjE1Yy0wOGMwMGVkYzA5ZjMiLCJpZCI6MTI1NDkxLCJpYXQiOjE3MjkxNDIzNzl9.6tsKL09OwpW2n5FqxFl1dpEyvU6waQwAavIRby6Gqfw',
@@ -27,12 +39,12 @@
     ]
     Cesium.Ion.defaultAccessToken = token[Math.floor(Math.random() * token.length)];
 
-    let viewer;
-
+    let viewer = reactive({});  //容器
+    let obj = reactive({})
 
     // 画点
     const drawPoint = () => {
-        const entity = viewer.entities.add({
+        obj.point = viewer.entities.add({
             id: 'point',
             name: '点',
             show: true,
@@ -44,11 +56,16 @@
                 disableDepthDistance: Number.POSITION_INFINITY,//无论如何缩放，标记点不被地形遮挡
             }
         })
-        // viewer.flyTo(entity)
     }
+
+    // 删除点
+    const removePoint = () => {
+        viewer.entities.remove(obj.point);//如果已删除则返回true,如果该集合中不存在该实体，则返回false
+    }
+
     // 画线
     const drawLine = () => {
-        const entity = viewer.entities.add({
+        obj.line = viewer.entities.add({
             id: 'line',
             name: '线',
             show: true,
@@ -64,9 +81,14 @@
             }
         })
     }
+    // 删除线
+    const removeLine = () => {
+        viewer.entities.remove(obj.line);
+    }
+
     // 画面
     const drawPlane = () => {
-        const plane = viewer.entities.add({
+        obj.plane = viewer.entities.add({
             id: 'polygon',
             name: '平面',
             show: true,
@@ -82,25 +104,33 @@
             }
         })
     }
+    // 删除面
+    const removePlane = () => {
+        viewer.entities.remove(obj.plane)
+    }
 
     // 创建矩形
     const drawRectangle = () => {
-        const rectangle = viewer.entities.add({
+        obj.rectangle = viewer.entities.add({
             id: 'rectangle',
             name: '矩形',
             show: true,
             rectangle: {
-                coordinates: Cesium.Rectangle.fromDegrees(119.51, 34.21, 119.53, 34.23),//参数依次为为西经、南纬、东经和北纬度数
+                coordinates: Cesium.Rectangle.fromDegrees(119.53, 34.25, 119.55, 34.27),//参数依次为为西经、南纬、东经和北纬度数
                 material: new Cesium.ColorMaterialProperty(
                     Cesium.Color.BLUE.withAlpha(0.5)
                 )
             }
         })
     }
+    // 删除矩形
+    const removeRectangle = () => {
+        viewer.entities.remove(obj.rectangle)
+    }
 
     // 创建管道
-    const drawCorridorEntity = () => {
-        const corridor = viewer.entities.add({
+    const drawCorridor = () => {
+        obj.corridor = viewer.entities.add({
             id: 'corridor',
             name: '管道',
             show: true,
@@ -123,10 +153,14 @@
             }
         })
     }
+    // 删除管道
+    const removeCorridor = () => {
+        viewer.entities.remove(obj.corridor)
+    }
 
     // 创建球体
     const drawSphere = () => {
-        const sphere = viewer.entities.add({
+        obj.sphere = viewer.entities.add({
             // id:'sphere',
             name: '球体',
             position: Cesium.Cartesian3.fromDegrees(119.55, 34.27, 300),
@@ -136,13 +170,16 @@
                 outline: true,
                 outlineColor: Cesium.Color.BLACK,
             }
-
         })
+    }
+    // 删除球体
+    const removeSphere = () => {
+        viewer.entities.remove(obj.sphere)
     }
 
     // 创建立方体
     const drawBox = () => {
-        const box = viewer.entities.add({
+        obj.box = viewer.entities.add({
             name: 'box',
             position: Cesium.Cartesian3.fromDegrees(119.56, 34.27, 200),
             box: {
@@ -151,10 +188,14 @@
             }
         })
     }
+    // 删除立方体
+    const removeBox = () => {
+        viewer.entities.remove(obj.box)
+    }
 
     //创建圆锥体
     const drawCone = () => {
-        const cone = viewer.entities.add({
+        obj.cone = viewer.entities.add({
             name: '圆锥体',
             position: Cesium.Cartesian3.fromDegrees(119.56, 34.27, 200),
             cylinder: {
@@ -165,10 +206,14 @@
             }
         })
     }
+    // 删除圆锥体
+    const removeCone = () => {
+        viewer.entities.remove(obj.cone)
+    }
 
     // 创建墙体
     const drawWall = () => {
-        const wall = viewer.entities.add({
+        obj.wall = viewer.entities.add({
             id: 'wall',
             name: '墙',
             show: true,
@@ -182,11 +227,18 @@
                         119.56, 34.29, 200,
                     ]
                 ),
-                material:Cesium.Color.AQUAMARINE
+                material: Cesium.Color.AQUAMARINE
             }
         })
     }
+    // 删除墙体
+    const removeWall = () => {
+        viewer.entities.remove(obj.wall)
+    }
 
+    const removeAll = ()=>{
+        viewer.entities.removeAll()
+    }
 
     onMounted(() => {
         //返回的是笛卡尔坐标   经纬度转笛卡尔坐标

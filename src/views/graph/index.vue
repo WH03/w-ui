@@ -36,6 +36,8 @@
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzNGE4MDJhMy1kNTRlLTQzM2YtYjE1Yy0wOGMwMGVkYzA5ZjMiLCJpZCI6MTI1NDkxLCJpYXQiOjE3MjkxNDIzNzl9.6tsKL09OwpW2n5FqxFl1dpEyvU6waQwAavIRby6Gqfw',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDcwZDdlNS01ZGU2LTQwZWUtOTcwNy03ZTE0NTcwMmNlYjMiLCJpZCI6MTI1NDkxLCJpYXQiOjE2NzY4ODAzNDN9.Cy3uiLaWrd13KvTouVqA9YamkMj8d5ThDVloSWzW61E',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkNjc5MGZkOC1lNWVlLTRkY2UtYmJmZC02YzUwNWFhZDIwNjAiLCJpZCI6MTI1NDkxLCJpYXQiOjE3Mjg5ODE5NjF9.wtnNY0g6Au1sLs7LFlWFtGxebl7AHNKDXx5lFYcnQFM',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NWRiNjJkNi02MWFmLTQxZjAtYmViZS01MjViZDU5NjlhNTIiLCJpZCI6MTI1NDkxLCJpYXQiOjE3MjkyMzgyMjR9.ob2-foAxkxsfvi60OTR6HLhTaV_E1QGKjUlAEY3CpCM',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmNzA1NmQ2MS0xMTgxLTQ4OTItOTgyNC0zYTVjNjhjYTYwN2YiLCJpZCI6MTI1NDkxLCJpYXQiOjE3MjkyMzgyNjF9.kf0IDvgQHGgCL4vAHTRBLdABwmuEXxd4_KeJ-xgQBQ8',
     ]
     Cesium.Ion.defaultAccessToken = token[Math.floor(Math.random() * token.length)];
 
@@ -72,7 +74,7 @@
             polyline: {
                 positions: Cesium.Cartesian3.fromDegreesArray([
                     119.52685, 34.28513,
-                    119.53995, 34.30513,
+                    118.53995, 34.30513,
                     119.53995, 34.26513,
                     119.55995, 34.32513,
                 ]),
@@ -145,7 +147,8 @@
                 outline: true,
                 outlineColor: Cesium.Color.WHITE,
                 heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
-                cornerType: Cesium.CornerType.MITERED,
+                // cornerType: Cesium.CornerType.MITERED,  //夹角是直角
+                cornerType: Cesium.CornerType.ROUNDED,  //夹角是圆角
                 material: new Cesium.ColorMaterialProperty(
                     Cesium.Color.RED.withAlpha(0.5)
                 ),
@@ -236,7 +239,7 @@
         viewer.entities.remove(obj.wall)
     }
 
-    const removeAll = ()=>{
+    const removeAll = () => {
         viewer.entities.removeAll()
     }
 
@@ -275,6 +278,8 @@
                 roll: Cesium.Math.toRadians(0),
             }
         })
+
+        
     });
 </script>
 

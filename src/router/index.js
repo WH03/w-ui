@@ -26,6 +26,12 @@ const routes = [
     meta: { title: "绘制图形" },
     component: () => import("../views/graph/index.vue"),
   },
+  {
+    path: "/billboard",
+    name: "billboard",
+    meta: { title: "添加标记" },
+    component: () => import("../views/billboard/index.vue"),
+  },
 
   {
     path: "/model",

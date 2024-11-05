@@ -15,7 +15,7 @@
 
     let viewer;
     onMounted(() => {
-        const Cartesian = Cesium.Cartesian3.fromDegrees(119.56985, 34.20513, 10000000)
+        const Cartesian = Cesium.Cartesian3.fromDegrees(119.56985, 34.20513, 10000000);
         viewer = new Cesium.Viewer('cesiumContainer', {
             animation: false, //是否显示动画控件
             baseLayerPicker: false, //是否显示图层选择控件

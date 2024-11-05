@@ -1,3 +1,3 @@
-# vue-vite-project
-基于vue3+vite+ant-design-vue的后台管理系统
+# webgl-test
+基于vue3+vite+ant-design-vue的webgl练习项目
 # Vue 3 + Vite

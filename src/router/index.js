@@ -32,6 +32,12 @@ const routes = [
     meta: { title: "添加标记" },
     component: () => import("../views/billboard/index.vue"),
   },
+  {
+    path: "/visualData",
+    name: "visualData",
+    meta: { title: "数据可视化" },
+    component: () => import("../views/visualData/index.vue"),
+  },
 
   {
     path: "/model",

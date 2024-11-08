@@ -11,6 +11,9 @@
                 <a-button type="primary" @click="drawBox">创建立方体</a-button>
                 <a-button type="primary" @click="drawCone">创建圆锥体</a-button>
                 <a-button type="primary" @click="drawWall">创建墙体</a-button>
+                <a-button type="primary" @click="drawPolygon">多边形</a-button>
+                <a-button type="primary" @click="drawEllipse">椭圆</a-button>
+
             </a-space>
             <p></p>
             <a-space wrap>
@@ -23,6 +26,9 @@
                 <a-button type="primary" danger @click="removeBox">删除立方体</a-button>
                 <a-button type="primary" danger @click="removeCone">删除圆锥体</a-button>
                 <a-button type="primary" danger @click="removeWall">删除墙体</a-button>
+                <a-button type="primary" danger @click="deletePolygon">删除多边形</a-button>
+                <a-button type="primary" danger @click="deleteEllipse">删除椭圆</a-button>
+
                 <a-button type="primary" danger @click="removeAll">删除所有</a-button>
             </a-space>
         </div>
@@ -118,10 +124,11 @@ const drawRectangle = () => {
         name: '矩形',
         show: true,
         rectangle: {
-            coordinates: Cesium.Rectangle.fromDegrees(119.53, 34.25, 119.55, 34.27),//参数依次为为西经、南纬、东经和北纬度数
+            coordinates: Cesium.Rectangle.fromDegrees(119.53, 34.25, 119.55, 34.27),//参数依次为为西经、南纬、东经和北纬度数  左下、右上
             material: new Cesium.ColorMaterialProperty(
                 Cesium.Color.BLUE.withAlpha(0.5)
-            )
+            ),
+            extrudedHeight: 1000
         }
     })
 }
@@ -238,6 +245,48 @@ const drawWall = () => {
 const removeWall = () => {
     viewer.entities.remove(obj.wall)
 }
+// 创建多边形：位置用数组写法
+const drawPolygon = () => {
+    obj.polygon = viewer.entities.add({
+        polygon: {
+            hierarchy: {
+                positions: Cesium.Cartesian3.fromDegreesArray([119, 34, 120, 34, 120, 34.5])
+            },
+            material: Cesium.Color.RED,
+            extrudedHeight: 2000,
+            height: 1000,
+            outline: true,//是否显示边线
+            outlineColor: Cesium.Color.WHITE,
+            fill: false,//是否填充
+        }
+    })
+
+    viewer.zoomTo(obj.polygon)
+}
+
+// 删除多边形
+const deletePolygon = () => {
+    viewer.entities.remove(obj.polygon)
+}
+
+// 创建椭圆
+const drawEllipse = () => {
+    obj.ellipse = viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(119.5, 34.3),
+        ellipse: {
+            semiMajorAxis: 5000,
+            semiMinorAxis: 3000,
+            material: Cesium.Color.RED,
+            rotation: Math.PI / 2
+        }
+    })
+    viewer.zoomTo(obj.ellipse)
+}
+// 删除椭圆
+const deleteEllipse = () => {
+    viewer.entities.remove(obj.ellipse)
+}
+
 
 const removeAll = () => {
     viewer.entities.removeAll()
@@ -260,10 +309,10 @@ onMounted(() => {
         infoBox: false, //是否显示点击要素之后显示的信息
         homeButton: false, //是否显示Home按钮
 
-        terrain: Cesium.Terrain.fromWorldTerrain({
-            requestWaterMask: true,//水面特效
-            requestVertexNormals: true// 地形数据
-        }),
+        // terrain: Cesium.Terrain.fromWorldTerrain({
+        //     requestWaterMask: true,//水面特效
+        //     requestVertexNormals: true// 地形数据
+        // }),
 
     })
 

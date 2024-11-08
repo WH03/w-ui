@@ -37,6 +37,11 @@ const routes = [
     name: "visualData",
     meta: { title: "数据可视化" },
     component: () => import("../views/visualData/index.vue"),
+  }, {
+    path: "/flowingLine",
+    name: "flowingLine",
+    meta: { title: "增长的线" },
+    component: () => import("../views/flowingLine/index.vue"),
   },
 
   {

@@ -31,16 +31,38 @@
   // 添加模型
   const addModal = async () => {
     try {
+
       //新版本写法
       obj.tileset = await Cesium.Cesium3DTileset.fromUrl(url);
       viewer.scene.primitives.add(obj.tileset)
+
+      // 设置旋转角度
+      const angle = Cesium.Math.toRadians(30); // 将角度转换为弧度
+      const rotationMatrix = Cesium.Matrix4.fromRotationTranslation(
+        Cesium.Matrix3.fromRotationY(angle)
+      );
+
+      // 获取原始的transform矩阵
+      const initialTransform = obj.tileset.root.transform;
+      // 创建一个新的transform矩阵，包含旋转信息
+      const newTransform = Cesium.Matrix4.multiply(
+        initialTransform,
+        rotationMatrix,
+        new Cesium.Matrix4()
+      );
+      // 将新的transform应用到3D Tiles模型上
+      obj.tileset.root.transform = newTransform;
+
       viewer.zoomTo(obj.tileset);
+
 
     } catch (error) {
       console.log('error:', error);
     }
 
   }
+
+
 
 
 

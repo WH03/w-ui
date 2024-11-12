@@ -2,16 +2,28 @@ import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
   {
-    path: "/",
-    name: "graph",
-    meta: { title: "绘制图形" },
-    component: () => import("../views/graph/index.vue"),
-  },
-  {
     path: "/customLayer",
     name: "customLayer",
     meta: { title: "自定义图层" },
     component: () => import("../views/customLayer/index.vue"),
+  },
+  {
+    path: "/coordinate",
+    name: "coordinate",
+    meta: { title: "坐标转换" },
+    component: () => import("../views/coordinate/index.vue"),
+  },
+  {
+    path: "/camera",
+    name: "camera",
+    meta: { title: "相机" },
+    component: () => import("../views/camera/index.vue"),
+  },
+  {
+    path: "/",
+    name: "graph",
+    meta: { title: "绘制图形" },
+    component: () => import("../views/graph/index.vue"),
   },
   {
     path: "/borderHighLight",

@@ -31,7 +31,6 @@
   // 添加模型
   const addModal = async () => {
     try {
-
       //新版本写法
       obj.tileset = await Cesium.Cesium3DTileset.fromUrl(url);
       viewer.scene.primitives.add(obj.tileset)

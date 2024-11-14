@@ -18,6 +18,11 @@ const routes = [
     name: "camera",
     meta: { title: "相机" },
     component: () => import("../views/camera/index.vue"),
+  },  {
+    path: "/flyTo",
+    name: "flyTo",
+    meta: { title: "飞行动画" },
+    component: () => import("../views/flyTo/index.vue"),
   },
   {
     path: "/",

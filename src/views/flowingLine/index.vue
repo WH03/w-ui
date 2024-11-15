@@ -3,7 +3,13 @@
         <div class="btnBox">
             <a-space wrap>
                 <a-button type="primary" @click="addFlowingLine">流动的线</a-button>
-                <a-button type="primary" danger @click="deleteFlowingLine">删除</a-button>
+                <a-button type="primary" @click="addGlowLine">发光的线</a-button>
+
+            </a-space>
+            <p></p>
+            <a-space wrap>
+                <a-button type="primary" danger @click="deleteFlowingLine">删除流动的线</a-button>
+                <a-button type="primary" danger @click="deleteGlowLine">删除发光的线</a-button>
             </a-space>
         </div>
 
@@ -44,9 +50,46 @@ const addFlowingLine = () => {
     })
     viewer.zoomTo(obj.line)
 }
-
+// 删除流动的线
 const deleteFlowingLine = () => {
     viewer.entities.remove(obj.line)
+}
+
+// 添加高光的线
+const addGlowLine = () => {
+    let lon, lat, num = 0;
+    obj.glowLine = viewer.entities.add({
+        polyline: {
+            // positions: Cesium.Cartesian3.fromDegreesArray([120, 35, 121, 36]),
+            positions: new Cesium.CallbackProperty(() => {
+                num += 0.005;
+                lon = 120 + num
+                lat = 30 + num
+                // if (lon < 123) {
+                //     return Cesium.Cartesian3.fromDegreesArray([120, 30, lon, lat])
+                // } else {
+                //     obj.glowLine.polyline.positions = Cesium.Cartesian3.fromDegreesArray([120, 30, 121, 31])
+                // }
+
+                if (lon < 123) {
+                    return Cesium.Cartesian3.fromDegreesArray([120, 30, lon, lat])
+                } else {
+                    obj.glowLine.polyline.positions = Cesium.Cartesian3.fromDegreesArray([120, 30, 121, 31])
+                }
+
+            }, false),
+            material: new Cesium.PolylineGlowMaterialProperty({
+                color: Cesium.Color.RED,
+                glowPower: 0.2
+            }),
+            width: 20
+        }
+    })
+    viewer.zoomTo(obj.glowLine)
+}
+// 删除发光的线
+const deleteGlowLine = () => {
+    viewer.entities.remove(obj.glowLine)
 }
 
 

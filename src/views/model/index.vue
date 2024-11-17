@@ -2,13 +2,14 @@
   <div id="cesiumContainer">
     <div class="btnBox">
       <a-space wrap>
-        <a-button type="primary" @click="addModal3dTiles">加载3dTiles模型</a-button>
-        <a-button type="primary" @click="addGlbModal">加载glb模型</a-button>
+        <a-button type="primary" @click="addmodel3dTiles">加载3dTiles模型</a-button>
+        <a-button type="primary" @click="addGlbmodel">加载glb模型</a-button>
+        <a-button type="primary" @click="pathPlayBack">路径回放</a-button>
       </a-space>
       <p></p>
       <a-space wrap>
-        <a-button type="primary" danger @click="delete3dTilesModal">删除3dTiles模型</a-button>
-        <a-button type="primary" danger @click="deleteGlbModal">删除3dTiles模型</a-button>
+        <a-button type="primary" danger @click="delete3dTilesmodel">删除3dTiles模型</a-button>
+        <a-button type="primary" danger @click="deleteGlbmodel">删除glb模型</a-button>
       </a-space>
     </div>
   </div>
@@ -31,7 +32,7 @@ let obj = reactive({})
 let url = '/3dtiles/park/tileset.json'
 
 // 添加模型
-const addModal3dTiles = async () => {
+const addmodel3dTiles = async () => {
   try {
     //新版本写法
     obj.tileset = await Cesium.Cesium3DTileset.fromUrl(url);
@@ -45,7 +46,7 @@ const addModal3dTiles = async () => {
 
     // 获取原始的transform矩阵
     const initialTransform = obj.tileset.root.transform;
-    // 创建一个新的transform矩阵，包含旋转信息
+    // 创建一个新的transform矩阵,包含旋转信息
     const newTransform = Cesium.Matrix4.multiply(
       initialTransform,
       rotationMatrix,
@@ -63,63 +64,175 @@ const addModal3dTiles = async () => {
 
 }
 
-const delete3dTilesModal = () => {
+const delete3dTilesmodel = () => {
   viewer.entities.remove(obj.tileset);
 }
 
 // 加载glb模型
-const addGlbModal = async () => {
+const addGlbmodel = async () => {
   let modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
     Cesium.Cartesian3.fromDegrees(120.6, 30.1, 5)
   )
   //写法一：
-  const model = viewer.scene.primitives.add(await Cesium.Model.fromGltfAsync({//Gltf和glb模型都用fromGltf
-    url: '/models/CesiumAir/Cesium_Air.glb',//模型文件路径
-    modelMatrix: modelMatrix,
-    scale: 2//模型在地图大小
-  }))
-  viewer.camera.flyTo({
-    destination: Cesium.Cartesian3.fromDegrees(120.6, 30.1, 50)
-  })
+  // const model = viewer.scene.primitives.add(await Cesium.Model.fromGltfAsync({//Gltf和glb模型都用fromGltf
+  //   url: '/models/CesiumAir/Cesium_Air.glb',//模型文件路径
+  //   modelMatrix: modelMatrix,
+  //   scale: 2//模型在地图大小
+  // }))
+  // viewer.camera.flyTo({
+  //   destination: Cesium.Cartesian3.fromDegrees(120.6, 30.1, 50)
+  // })
 
   // 写法二：
-  // const position = Cesium.Cartesian3.fromDegrees(
-  //   123.0744619,
-  //   44.0503706,
-  //   5000.0
-  // );
-  // const heading = Cesium.Math.toRadians(135);
-  // const pitch = 0;
-  // const roll = 0;
-  // const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-  // const orientation = Cesium.Transforms.headingPitchRollQuaternion(
-  //   position,
-  //   hpr
-  // );
+  const position = Cesium.Cartesian3.fromDegrees(123.0744619, 44.0503706, 5000.0);
+  const hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(135), 0, 0);
+  const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
 
-  // const entity = viewer.entities.add({
-  //   name: "Cesium_Air",
-  //   position: position,
-  //   orientation: orientation,
-  //   model: {
-  //     uri: "/models/CesiumAir/Cesium_Air.glb",
-  //     minimumPixelSize: 128,
-  //     maximumScale: 20000,
-  //   },
-  // });
-  // viewer.trackedEntity = entity;
-
+  obj.glbmodel = viewer.entities.add({
+    name: "Cesium_Air",
+    position: position,
+    orientation: orientation,
+    model: {
+      uri: "/models/CesiumAir/Cesium_Air.glb",
+      minimumPixelSize: 128,
+      maximumScale: 20000,
+    },
+  });
+  // 聚焦到模型
+  viewer.trackedEntity = obj.glbmodel;
 }
 
 // 删除glb模型
-const deleteGlbModal = () => {
+const deleteGlbmodel = () => {
+  viewer.entities.remove(obj.glbmodel)
+}
 
+// 路径回放
+const pathPlayBack = () => {
+  // const position = Cesium.Cartesian3.fromDegrees(118.1, 34.29, 5000);
+  // const hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(135), 0, 0)
+  // const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+  // // 添加模型
+  // obj.glbPathBack = viewer.entities.add({
+  //   name: 'Cesium_Air2',
+  //   position: position,
+  //   orientation: orientation,
+  //   model: {
+  //     uri: '/models/CesiumAir/Cesium_Air.glb',
+  //     minimumPixelSize: 500,
+  //     maximumScale: 20000,
+  //   }
+  // })
+
+  // 添加线
+  // let linePositon = [[
+  //   118.56, 34.29, 11.147,
+  //   118.28, 34.29, 11.143,
+  //   118.28, 34.55, 11.157,
+  //   118.56, 34.55, 11.126,
+  //   118.58, 34.56, 11.173,
+  //   118.60, 34.59, 11.158,
+  //   118.62, 34.53, 11.169,
+  //   118.63, 34.55, 11.172,
+  //   118.59, 34.57, 11.132,
+  // ]]
+
+  let linePositon = [
+    [117.45859906800001, 31.143571198000075, 10.89079999999376],
+    [117.45789337300005, 31.143422075000046, 11.12170000000333],
+    [117.4571119630001, 31.143350937000037, 11.545700000002398],
+    [117.45620292500007, 31.143325030000028, 11.529899999994086],
+    [117.45545284400009, 31.143363754000063, 11.038100000005215],
+    [117.45473256600008, 31.143448056000068, 10.86380000000645],
+    [117.45399052200003, 31.143623321000064, 11.345600000000559],
+    [117.45347615200001, 31.14381135600007, 11.687300000005052],
+    [117.45292459000007, 31.144031608000034, 12.106100000004517],
+    [117.45192097000006, 31.144426226000064, 12.842399999994086],
+    [117.45065835500009, 31.144954275000032, 12.712299999999232],
+    [117.44980033200011, 31.145266268000057, 12.504899999999907],
+    [117.44943370300007, 31.145413392000023, 12.731599999999162],
+    [117.44920128900003, 31.145382554000037, 12.967699999993783],
+    [117.44897692800009, 31.144980649000047, 14.909599999999045],
+    [117.44872415000009, 31.14449598400006, 14.55899999999383],
+    [117.44851592000009, 31.144125416000065, 14.410999999992782],
+    [117.44848024700002, 31.14392828000007, 14.475800000000163],
+    [117.44948683700011, 31.14350793500006, 14.507400000002235],
+    [117.45089297600009, 31.142959855000072, 14.290399999998044],
+    [117.45149371900004, 31.142693826000027, 14.127099999997881],
+    [117.45166848000008, 31.142571364000048, 15.52610000000277],
+    [117.4516358520001, 31.142433625000024, 14.0341000000044],
+    [117.45082070700065, 31.140899211000033, 13.289099999994505]
+  ]
+
+
+
+  obj.line = viewer.entities.add({
+    name: 'line',
+    polyline: {
+      positions: Cesium.Cartesian3.fromDegreesArrayHeights(linePositon.flat()),
+      material: Cesium.Color.RED.withAlpha(0.6),
+      width: 5
+    },
+  })
+
+  // 轨迹回放
+  let property = new Cesium.SampledPositionProperty();
+  // 开始时间
+  let startTime = new Date();
+  let stopTime;
+  let timeStamp = startTime.getTime()
+
+  linePositon.forEach((pos, index) => {
+    // 设置成标准时间
+    let time = new Date(timeStamp + index * 5000)
+    stopTime = time
+    let position = Cesium.Cartesian3.fromDegrees(pos[0], pos[1], pos[2])
+
+    property.addSample(Cesium.JulianDate.fromDate(time), position)
+  })
+  // console.log('@@@property：', property)
+  // 设置插值
+  property.setInterpolationOptions({
+    interpolationDegree: 0.0001,
+    interpolationAlgorithm: Cesium.LagrangePolynomialApproximation
+  })
+
+  obj.entity = viewer.entities.add({
+    availability: new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({
+      start: Cesium.JulianDate.fromDate(startTime),
+      stop: Cesium.JulianDate.fromDate(new Date(stopTime))
+    })]),
+    position: property,//点集
+    model: {
+      uri: '/models/CesiumAir/Cesium_Air.glb',
+      minimumPixelSize: 10,
+      maximumScale: 20,
+    },
+    path: {
+      leadTime: 0,
+      resolution: 1,
+      material: new Cesium.PolylineGlowMaterialProperty({
+        glowPower: 0.1,
+        color: Cesium.Color.AQUA
+      }),
+      width: 8
+    }
+  })
+  //修改时间轴的当前时间
+  viewer.clock.currentTime = Cesium.JulianDate.fromDate(startTime)
+  viewer.clock.stopTime = Cesium.JulianDate.fromDate(new Date(stopTime))
+  viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP//运行一遍
+  viewer.clock.shouldAnimate = true//开始播放
+
+  // 聚焦到模型
+  // viewer.trackedEntity = obj.glbPathBack;
+  viewer.zoomTo(obj.line)
 }
 
 
 
 onMounted(() => {
-  const Cartesian = Cesium.Cartesian3.fromDegrees(119.56985, 34.20513, 50)
+  const Cartesian = Cesium.Cartesian3.fromDegrees(117.45, 31.14, 50)
   viewer = new Cesium.Viewer('cesiumContainer', {
     animation: false, //是否显示动画控件
     baseLayerPicker: false, //是否显示图层选择控件
@@ -138,9 +251,9 @@ onMounted(() => {
   viewer.camera.setView({
     destination: Cartesian,//初始位置
     orientation: {//初始方向
-      heading: Cesium.Math.toRadians(0), //表示绕 Z 轴旋转，控制物体的水平方向。
-      pitch: Cesium.Math.toRadians(-30), //表示绕 X 轴旋转，控制物体的上下方向。
-      roll: Cesium.Math.toRadians(0),//表示绕 Y 轴旋转，控制物体的倾斜或翻转。
+      heading: Cesium.Math.toRadians(0), //表示绕 Z 轴旋转,控制物体的水平方向。
+      pitch: Cesium.Math.toRadians(-30), //表示绕 X 轴旋转,控制物体的上下方向。
+      roll: Cesium.Math.toRadians(0),//表示绕 Y 轴旋转,控制物体的倾斜或翻转。
     }
   })
   // 点击事件 

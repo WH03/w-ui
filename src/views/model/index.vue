@@ -3,6 +3,7 @@
     <div class="btnBox">
       <a-space wrap>
         <a-button type="primary" @click="addmodel3dTiles">加载3dTiles模型</a-button>
+        <a-button type="primary" @click="addmodel3dTilesMore">加载3dTiles模型并设置拾取要素</a-button>
         <a-button type="primary" @click="addGlbmodel">加载glb模型</a-button>
         <a-button type="primary" @click="pathPlayBack">路径回放</a-button>
       </a-space>
@@ -63,6 +64,30 @@ const addmodel3dTiles = async () => {
   }
 
 }
+// 添加3dtiles模型
+const addmodel3dTilesMore = async () => {
+  obj.models = addThreeDTiles(75343)
+  obj.models.then(tileset => {
+    console.log('tileset@@@:', tileset)
+  })
+}
+
+const createDiv = () => {
+  const div = document.createElement('div');
+  div.className = 'tips';
+  div.style.display = 'none';
+  div.style.position = 'absolute';
+  div.style.bottom = '0';
+  div.style.top = '0';
+  div.style.color = 'white';
+  div.stylep['pointer-events'] = 'none'
+  div.style.padding = '4px'
+  div.style.backgroundColor = 'black'
+
+  let app = document.querySelector('#app')
+  app.appendChild(div)
+}
+
 
 const delete3dTilesmodel = () => {
   viewer.entities.remove(obj.tileset);
@@ -109,34 +134,6 @@ const deleteGlbmodel = () => {
 
 // 路径回放
 const pathPlayBack = () => {
-  // const position = Cesium.Cartesian3.fromDegrees(118.1, 34.29, 5000);
-  // const hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(135), 0, 0)
-  // const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
-  // // 添加模型
-  // obj.glbPathBack = viewer.entities.add({
-  //   name: 'Cesium_Air2',
-  //   position: position,
-  //   orientation: orientation,
-  //   model: {
-  //     uri: '/models/CesiumAir/Cesium_Air.glb',
-  //     minimumPixelSize: 500,
-  //     maximumScale: 20000,
-  //   }
-  // })
-
-  // 添加线
-  // let linePositon = [[
-  //   118.56, 34.29, 11.147,
-  //   118.28, 34.29, 11.143,
-  //   118.28, 34.55, 11.157,
-  //   118.56, 34.55, 11.126,
-  //   118.58, 34.56, 11.173,
-  //   118.60, 34.59, 11.158,
-  //   118.62, 34.53, 11.169,
-  //   118.63, 34.55, 11.172,
-  //   118.59, 34.57, 11.132,
-  // ]]
-
   let linePositon = [
     [117.45859906800001, 31.143571198000075, 10.89079999999376],
     [117.45789337300005, 31.143422075000046, 11.12170000000333],
@@ -163,8 +160,6 @@ const pathPlayBack = () => {
     [117.4516358520001, 31.142433625000024, 14.0341000000044],
     [117.45082070700065, 31.140899211000033, 13.289099999994505]
   ]
-
-
 
   obj.line = viewer.entities.add({
     name: 'line',
@@ -246,7 +241,8 @@ onMounted(() => {
 
   });
 
-
+  // 深度检测
+  viewer.scene.globe.depthTestAgainstTerrain = true
   //相机
   viewer.camera.setView({
     destination: Cartesian,//初始位置
@@ -268,6 +264,37 @@ onMounted(() => {
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
 });
+
+
+async function addThreeDTiles(url, option) {
+  // 开启地形深度检测:
+  // 控制在渲染场景时，相机是否进行深度测试以避免将被遮挡的物体绘制在前景
+  // true: 相机会根据地形高度信息进行深度测试，避免将低于地面的物体绘制在地面之上
+  viewer.scene.globe.depthTestAgainstTerrain = true
+
+  // ! 写法二：
+  let tileset = {}
+  if (typeof url == 'number') {
+    tileset = await Cesium.Cesium3DTileset.fromIonAssetId(url, option);
+  } else {
+    tileset = await Cesium.Cesium3DTileset.fromUrl(url, option);
+  }
+
+  viewer.scene.primitives.add(tileset);
+  // 定位到模型
+  viewer.zoomTo(
+    tileset,
+    new Cesium.HeadingPitchRange(
+      0.0,
+      -0.5,
+      tileset.boundingSphere.radius * 2.0 // 模型的包围球半径的2倍
+    )
+  )
+  return tileset // 返回模型对象
+}
+
+
+
 
 </script>
 

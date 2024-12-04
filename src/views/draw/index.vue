@@ -39,23 +39,14 @@ let lineList = ref([])
 // 画线
 const drawLine = (pos) => {
     if (pos.length < 1) return;
-    console.log('pos$##', pos);
+    console.log('pos$##', typeof pos);
     obj.line = viewer.entities.add({
         // id: 'line',
         name: '线',
         show: true,
         polyline: {
-            // positions: [
-            //     {
-            //         x: -2602061.7890276657, y: 4582285.554964762, z: 3581350.49611014
-            //     },
-            //     {
-            //         x: -2605053.124308194, y: 4586585.742298098, z: 3573726.1172516425
-            //     }
-            // ],
-            // position: pos,
-            position: pos,
-            width: 30,
+            positions: pos,
+            width: 3,
             material: Cesium.Color.BLUE.withAlpha(0.5)
         }
     })
@@ -63,18 +54,20 @@ const drawLine = (pos) => {
 }
 
 // 画面
-const drawPlane = () => {
+const drawPlane = (pos) => {
+    if (pos.length < 1) return;
     obj.plane = viewer.entities.add({
-        id: 'polygon',
+        // id: 'polygon',
         name: '平面',
         show: true,
         polygon: {
-            hierarchy: Cesium.Cartesian3.fromDegreesArray([
-                119.55, 34.28,
-                119.57, 34.28,
-                119.57, 34.25,
-                119.55, 34.25,
-            ]),
+            // hierarchy: Cesium.Cartesian3.fromDegreesArray([
+            //     119.55, 34.28,
+            //     119.57, 34.28,
+            //     119.57, 34.25,
+            //     119.55, 34.25,
+            // ]),
+            hierarchy: pos,
             material: Cesium.Color.AQUA.withAlpha(0.8)
         }
     })
@@ -122,10 +115,11 @@ onMounted(() => {
         // newPosition.map(item => {
         //     console.log('@@@item', item);
         // })
-        addPoint(newPosition)
-
         lineList.value.push(newPosition)
+        addPoint(newPosition)
         drawLine(lineList.value)
+        drawPlane(lineList.value)
+
 
         if (Cesium.defined(pick)) {
             // 将返回的三维坐标（Cartesian3）转换为地理坐标（经度、纬度、高度）

@@ -74,10 +74,10 @@ const routes = [
     component: () => import("../views/model/index.vue"),
   },
   {
-    path: "/222",
-    name: "3333",
-    meta: { title: "asdadas" },
-    component: () => import("../views/model/index.vue"),
+    path: "/draw",
+    name: "draw",
+    meta: { title: "画图" },
+    component: () => import("../views/draw/index.vue"),
   },
 ];
 

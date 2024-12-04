@@ -84,10 +84,11 @@ const drawLine = () => {
                 119.53995, 34.26513,
                 119.55995, 34.32513,
             ]),
-            width: 3,
+            width: 30,
             material: Cesium.Color.BLUE.withAlpha(0.5)
         }
     })
+    viewer.zoomTo(obj.line)
 }
 // 删除线
 const removeLine = () => {
@@ -315,6 +316,16 @@ onMounted(() => {
         // }),
 
     })
+
+    // // 开启抗锯齿
+    // if (Cesium.FeatureDetection.supportsImageRenderingPixelated()) {
+    //     //判断是否支持图像渲染像素化处理
+    //     viewer.resolutionScale = window.devicePixelRatio;
+    // }
+    // viewer.scene.fxaa = false;
+    // viewer.scene.postProcessStages.fxaa.enabled = true;
+
+
 
 
     //相机

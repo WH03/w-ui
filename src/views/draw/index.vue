@@ -1,9 +1,12 @@
 <template>
     <div id="cesiumContainer">
         <div class="box">
-            <a-card title="点击画点" :bordered="false">
+            <!-- <a-card title="点击画点" :bordered="false">
                 <p>点击画点</p>
-            </a-card>
+            </a-card> -->
+            <a-space wrap>
+                <a-button type="primary" @click="drawPlane">画面</a-button>
+            </a-space>
         </div>
     </div>
 </template>
@@ -11,6 +14,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import * as Cesium from "cesium";
+import DrawTool from '@/utils/drawGraphic.js'
 let token = [
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzNGE4MDJhMy1kNTRlLTQzM2YtYjE1Yy0wOGMwMGVkYzA5ZjMiLCJpZCI6MTI1NDkxLCJpYXQiOjE3MjkxNDIzNzl9.6tsKL09OwpW2n5FqxFl1dpEyvU6waQwAavIRby6Gqfw',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDcwZDdlNS01ZGU2LTQwZWUtOTcwNy03ZTE0NTcwMmNlYjMiLCJpZCI6MTI1NDkxLCJpYXQiOjE2NzY4ODAzNDN9.Cy3uiLaWrd13KvTouVqA9YamkMj8d5ThDVloSWzW61E',
@@ -21,6 +25,7 @@ Cesium.Ion.defaultAccessToken = token[Math.floor(Math.random() * token.length)];
 
 let viewer;
 let obj = {};
+let drawTool;
 
 // 画点
 const addPoint = (pos) => {
@@ -54,25 +59,28 @@ const drawLine = (pos) => {
 }
 
 // 画面
-const drawPlane = (pos) => {
-    if (pos.length < 1) return;
-    obj.plane = viewer.entities.add({
-        // id: 'polygon',
-        name: '平面',
-        show: true,
-        polygon: {
-            // hierarchy: Cesium.Cartesian3.fromDegreesArray([
-            //     119.55, 34.28,
-            //     119.57, 34.28,
-            //     119.57, 34.25,
-            //     119.55, 34.25,
-            // ]),
-            hierarchy: pos,
-            material: Cesium.Color.AQUA.withAlpha(0.8)
-        }
-    })
-}
+// const drawPlane = (pos) => {
+//     if (pos.length < 1) return;
+//     obj.plane = viewer.entities.add({
+//         // id: 'polygon',
+//         name: '平面',
+//         show: true,
+//         polygon: {
+//             // hierarchy: Cesium.Cartesian3.fromDegreesArray([
+//             //     119.55, 34.28,
+//             //     119.57, 34.28,
+//             //     119.57, 34.25,
+//             //     119.55, 34.25,
+//             // ]),
+//             hierarchy: pos,
+//             material: Cesium.Color.AQUA.withAlpha(0.8)
+//         }
+//     })
+// }
 
+const drawPlane = () => {
+    drawTool.activate('Polygon')
+}
 
 
 onMounted(() => {
@@ -89,8 +97,10 @@ onMounted(() => {
         homeButton: false, //是否显示Home按钮
     });
 
+    drawTool = new DrawTool(viewer)
+    // drawTool._addPolygon()
 
-
+    console.log('@@@###drawTool', drawTool);
 
     //相机
     viewer.camera.setView({
@@ -115,10 +125,10 @@ onMounted(() => {
         // newPosition.map(item => {
         //     console.log('@@@item', item);
         // })
-        lineList.value.push(newPosition)
-        addPoint(newPosition)
-        drawLine(lineList.value)
-        drawPlane(lineList.value)
+        // lineList.value.push(newPosition)
+        // addPoint(newPosition)
+        // drawLine(lineList.value)
+        // drawPlane(lineList.value)
 
 
         if (Cesium.defined(pick)) {

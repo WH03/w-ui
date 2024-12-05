@@ -6,7 +6,6 @@
                 <a-button type="primary" @click="addLabel">添加文本</a-button>
             </a-space>
         </div>
-
     </div>
 </template>
 
@@ -71,10 +70,10 @@
             //自定义图层
             // baseLayer: false,
             // baseLayerPicker: false,
-            terrain: Cesium.Terrain.fromWorldTerrain({
-                requestWaterMask: true,//水面特效
-                requestVertexNormals: true// 地形数据
-            }),
+            // terrain: Cesium.Terrain.fromWorldTerrain({
+            //     requestWaterMask: true,//水面特效
+            //     requestVertexNormals: true// 地形数据
+            // }),
 
         });
 

@@ -79,6 +79,12 @@ const routes = [
     meta: { title: "画图" },
     component: () => import("../views/draw/index.vue"),
   },
+  {
+    path: "/playBackPath",
+    name: "playBackPath",
+    meta: { title: "轨迹回放" },
+    component: () => import("../views/playBackPath/index.vue"),
+  },
 ];
 
 const router = createRouter({

@@ -39,6 +39,12 @@ const addmodel3dTiles = async () => {
     obj.tileset = await Cesium.Cesium3DTileset.fromUrl(url);
     viewer.scene.primitives.add(obj.tileset)
 
+    // 修改颜色
+    obj.tileset.style = new Cesium.Cesium3DTileStyle({
+      color: "color('blue',0.5)",
+      show: true
+    })
+
     // 设置旋转角度
     const angle = Cesium.Math.toRadians(30); // 将角度转换为弧度
     const rotationMatrix = Cesium.Matrix4.fromRotationTranslation(
@@ -56,6 +62,8 @@ const addmodel3dTiles = async () => {
     // 将新的transform应用到3D Tiles模型上
     obj.tileset.root.transform = newTransform;
 
+
+
     viewer.zoomTo(obj.tileset);
 
 
@@ -69,6 +77,22 @@ const addmodel3dTilesMore = async () => {
   obj.models = addThreeDTiles(75343)
   obj.models.then(tileset => {
     console.log('tileset@@@:', tileset)
+    // 针对不同高度，修改不同颜色
+    tileset.style = new Cesium.Cesium3DTileStyle({
+      color: {
+        conditions: [
+          ['${Height}>=300', 'rgba(45,0,75,0.5)'],
+          ['${Height}>=200', 'rgb(102,71,151)'],
+          ['${Height}>=100', 'rgb(170,162,204)'],
+          ['${Height}>=50', 'rgb(224,226,238)'],
+          ['${Height}>=25', 'rgb(252,230,200)'],
+          ['${Height}>=10', 'rgb(248,176,87)'],
+          ['${Height}>=5', 'rgb(1980,106,11)'],
+          ['true', 'rgb(127,59,8)']
+        ]
+      },
+      show: '${Height}>=0'
+    })
   })
 }
 

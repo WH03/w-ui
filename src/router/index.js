@@ -85,6 +85,12 @@ const routes = [
     meta: { title: "轨迹回放" },
     component: () => import("../views/playBackPath/index.vue"),
   },
+  {
+    path: "/dataSources",
+    name: "dataSources",
+    meta: { title: "turf使用" },
+    component: () => import("../views/dataSources/index.vue"),
+  },
 ];
 
 const router = createRouter({

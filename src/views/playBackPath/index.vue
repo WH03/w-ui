@@ -104,28 +104,78 @@
 
 
     // 开始飞行
-    const startFly = () => {
-        const start = Cesium.JulianDate.fromDate(new Date(2024, 2, 25, 16));
-        const stop = Cesium.JulianDate.addSeconds(start, 360, new Cesium.JulianDate());
+    // const startFly = () => {
+    //     const start = Cesium.JulianDate.fromDate(new Date(2024, 2, 25, 16));
+    //     const stop = Cesium.JulianDate.addSeconds(start, 360, new Cesium.JulianDate());
 
+    //     viewer.clock.startTime = start.clone();
+    //     viewer.clock.stopTime = stop.clone();
+    //     viewer.clock.currentTime = start.clone();
+    //     viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; // 时间停止而不是循环
+    //     viewer.clock.multiplier = 10; // 时间流逝的速度是实际时间的10倍
+
+    //     viewer.timeline.zoomTo(start, stop);
+
+    //     // 更新路径并开始飞行
+    //     const position = computeFlightPath(flightPath, start);
+    //     obj.model.position = position;
+    //     obj.model.orientation = new Cesium.VelocityOrientationProperty(position);
+
+    //     console.log(`output->viewer点击飞行`, viewer)
+
+    //     viewer.trackedEntity = obj.model;
+    //     // obj.model.position = position;
+    // };
+
+
+    // 开始飞行
+    const startFly = () => {
+        //将指定的日期和时间（2024年3月25日16:00）转换为 Cesium 的 JulianDate 类型，JulianDate 是 Cesium 中用来表示时间的类。
+        const start = Cesium.JulianDate.fromDate(new Date(2024, 2, 25, 16));
+        // 通过调用 Cesium.JulianDate.addSeconds() 方法，在 start 的基础上增加 360 秒（即 6 分钟），设定仿真结束的时间。
+        const stop = Cesium.JulianDate.addSeconds(start, 360, new Cesium.JulianDate());
+        // 设置仿真的开始和结束时间。
         viewer.clock.startTime = start.clone();
         viewer.clock.stopTime = stop.clone();
+        // 初始化当前时间为开始时间。
         viewer.clock.currentTime = start.clone();
-        viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; // 时间停止而不是循环
-        viewer.clock.multiplier = 10; // 时间流逝的速度是实际时间的10倍
+        viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //表示时间在结束后停止，而不是循环。
+        viewer.clock.multiplier = 10;// 设置时间流逝的速度，10 表示时间流逝的速度是实际时间的10倍。
 
-        viewer.timeline.zoomTo(start, stop);
+        //通过 viewer.timeline.zoomTo() 设置时间轴的缩放范围，使时间轴显示从 start 到 stop 这段时间。
+        // viewer.timeline.zoomTo(start, stop);
 
-        // 更新路径并开始飞行
+
         const position = computeFlightPath(flightPath, start);
-        obj.model.position = position;
-        obj.model.orientation = new Cesium.VelocityOrientationProperty(position);
+        obj.model = viewer.entities.add({
+            // availability：定义实体的时间区间，确保该模型在仿真时间段内可见。
+            availability: new Cesium.TimeIntervalCollection([
+                new Cesium.TimeInterval({
+                    start: start,
+                    stop: stop,
+                }),
+            ]),
+            position: position,
+            // 使用 VelocityOrientationProperty 使模型根据其运动的速度方向进行旋转。
+            orientation: new Cesium.VelocityOrientationProperty(position),
+            model: {
+                uri: "/models/DJ.glb",
+                minimumPixelSize: 128
+            },
+            path: {//为模型创建一条路径显示，使用 PolylineGlowMaterialProperty 给路径添加发光效果，颜色为黄色，宽度为 10。
+                resolution: 1,
+                material: new Cesium.PolylineGlowMaterialProperty({
+                    glowPower: 0.1,
+                    color: Cesium.Color.YELLOW,
+                }),
+                width: 10,
+            },
+        })
 
-        console.log(`output->viewer点击飞行`, viewer)
+        // viewer.trackedEntity = obj.model;
+        viewer.zoomTo = obj;
+    }
 
-        viewer.trackedEntity = obj.model;
-        // obj.model.position = position;
-    };
 
 
 
@@ -197,7 +247,7 @@
             animation: false, //是否显示动画控件
             baseLayerPicker: false, //是否显示图层选择控件
             geocoder: false, //是否显示地名查找控件
-            // timeline: false, //是否显示时间线控件
+            timeline: false, //是否显示时间线控件
             sceneModePicker: false, //是否显示投影方式控件
             navigationHelpButton: false, //是否显示帮助信息控件
             fullscreenButton: false, //是否显示全屏按钮
@@ -218,7 +268,7 @@
         })
 
         Cesium.Math.setRandomNumberSeed(3);
-        loadModelAndPath(flightPath); // 初始化时加载模型和路径
+        // loadModelAndPath(flightPath); // 初始化时加载模型和路径
     });
 
 </script>

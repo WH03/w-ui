@@ -16,9 +16,9 @@
     import { fabric } from 'fabric';
 
     // Vue ref 来引用 canvas 元素
-    const canvasRef = ref(null);
-    const fabricObj = ref(null);
-    const drawingEnabled = ref(false);
+    const canvasRef = ref(null);// canvas 元素的引用
+    const fabricObj = ref(null);//
+    const drawingEnabled = ref(false);// 是否允许绘制
     let isPencilMode = ref(false);
     const roofPoints = ref([]);
     const lines = ref([]);
@@ -31,7 +31,7 @@
         '/img/cover1.png',
         '/img/cover2.png'
     ]);
-    const currentImageIndex = ref(0);
+    const currentImageIndex = ref(0);// 当前图片索引
 
     // 加载当前图片
     const loadImage = () => {

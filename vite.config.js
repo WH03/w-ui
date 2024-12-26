@@ -5,7 +5,7 @@ import Components from "unplugin-vue-components/vite";
 import { AntDesignVueResolver } from "unplugin-vue-components/resolvers";
 
 // 导入cesium插件
-import cesium from 'vite-plugin-cesium';
+import cesium from "vite-plugin-cesium";
 
 // 引入resolve
 import { resolve } from "path";
@@ -20,8 +20,16 @@ export default defineConfig({
         }),
       ],
     }),
-    cesium()
+    cesium(),
   ],
+  // 设置scss的api类型为modern-compiler
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern-compiler",
+      },
+    },
+  },
   resolve: {
     // 设置路径别名
     alias: {

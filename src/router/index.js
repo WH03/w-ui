@@ -91,6 +91,12 @@ const routes = [
     meta: { title: "turf使用" },
     component: () => import("../views/dataSources/index.vue"),
   },
+  {
+    path: "/test",
+    name: "test",
+    meta: { title: "测试" },
+    component: () => import("../views/test/index.vue"),
+  },
 ];
 
 const router = createRouter({

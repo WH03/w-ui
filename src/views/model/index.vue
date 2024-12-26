@@ -5,7 +5,6 @@
         <a-button type="primary" @click="addmodel3dTiles">加载3dTiles模型</a-button>
         <a-button type="primary" @click="addmodel3dTilesMore">加载3dTiles模型并设置拾取要素</a-button>
         <a-button type="primary" @click="addGlbmodel">加载glb模型</a-button>
-        <a-button type="primary" @click="pathPlayBack">路径回放</a-button>
       </a-space>
       <p></p>
       <a-space wrap>
@@ -32,6 +31,8 @@ let viewer;
 let obj = reactive({})
 let url = '/3dtiles/park/tileset.json'
 
+let div;//创建div
+let silhouetteBlue;//边缘检测对象
 // 添加模型
 const addmodel3dTiles = async () => {
   try {
@@ -96,26 +97,16 @@ const addmodel3dTilesMore = async () => {
   })
 }
 
-const createDiv = () => {
-  const div = document.createElement('div');
-  div.className = 'tips';
-  div.style.display = 'none';
-  div.style.position = 'absolute';
-  div.style.bottom = '0';
-  div.style.top = '0';
-  div.style.color = 'white';
-  div.stylep['pointer-events'] = 'none'
-  div.style.padding = '4px'
-  div.style.backgroundColor = 'black'
-
-  let app = document.querySelector('#app')
-  app.appendChild(div)
-}
 
 
+
+
+// 删除3dtiles
 const delete3dTilesmodel = () => {
   viewer.entities.remove(obj.tileset);
 }
+
+
 
 // 加载glb模型
 const addGlbmodel = async () => {
@@ -156,97 +147,44 @@ const deleteGlbmodel = () => {
   viewer.entities.remove(obj.glbmodel)
 }
 
-// 路径回放
-const pathPlayBack = () => {
-  let linePositon = [
-    [117.45859906800001, 31.143571198000075, 10.89079999999376],
-    [117.45789337300005, 31.143422075000046, 11.12170000000333],
-    [117.4571119630001, 31.143350937000037, 11.545700000002398],
-    [117.45620292500007, 31.143325030000028, 11.529899999994086],
-    [117.45545284400009, 31.143363754000063, 11.038100000005215],
-    [117.45473256600008, 31.143448056000068, 10.86380000000645],
-    [117.45399052200003, 31.143623321000064, 11.345600000000559],
-    [117.45347615200001, 31.14381135600007, 11.687300000005052],
-    [117.45292459000007, 31.144031608000034, 12.106100000004517],
-    [117.45192097000006, 31.144426226000064, 12.842399999994086],
-    [117.45065835500009, 31.144954275000032, 12.712299999999232],
-    [117.44980033200011, 31.145266268000057, 12.504899999999907],
-    [117.44943370300007, 31.145413392000023, 12.731599999999162],
-    [117.44920128900003, 31.145382554000037, 12.967699999993783],
-    [117.44897692800009, 31.144980649000047, 14.909599999999045],
-    [117.44872415000009, 31.14449598400006, 14.55899999999383],
-    [117.44851592000009, 31.144125416000065, 14.410999999992782],
-    [117.44848024700002, 31.14392828000007, 14.475800000000163],
-    [117.44948683700011, 31.14350793500006, 14.507400000002235],
-    [117.45089297600009, 31.142959855000072, 14.290399999998044],
-    [117.45149371900004, 31.142693826000027, 14.127099999997881],
-    [117.45166848000008, 31.142571364000048, 15.52610000000277],
-    [117.4516358520001, 31.142433625000024, 14.0341000000044],
-    [117.45082070700065, 31.140899211000033, 13.289099999994505]
-  ]
-
-  obj.line = viewer.entities.add({
-    name: 'line',
-    polyline: {
-      positions: Cesium.Cartesian3.fromDegreesArrayHeights(linePositon.flat()),
-      material: Cesium.Color.RED.withAlpha(0.6),
-      width: 5
-    },
-  })
-
-  // 轨迹回放
-  let property = new Cesium.SampledPositionProperty();
-  // 开始时间
-  let startTime = new Date();
-  let stopTime;
-  let timeStamp = startTime.getTime()
-
-  linePositon.forEach((pos, index) => {
-    // 设置成标准时间
-    let time = new Date(timeStamp + index * 5000)
-    stopTime = time
-    let position = Cesium.Cartesian3.fromDegrees(pos[0], pos[1], pos[2])
-
-    property.addSample(Cesium.JulianDate.fromDate(time), position)
-  })
-  // console.log('@@@property：', property)
-  // 设置插值
-  property.setInterpolationOptions({
-    interpolationDegree: 0.0001,
-    interpolationAlgorithm: Cesium.LagrangePolynomialApproximation
-  })
-
-  obj.entity = viewer.entities.add({
-    availability: new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({
-      start: Cesium.JulianDate.fromDate(startTime),
-      stop: Cesium.JulianDate.fromDate(new Date(stopTime))
-    })]),
-    position: property,//点集
-    model: {
-      uri: '/models/CesiumAir/Cesium_Air.glb',
-      minimumPixelSize: 10,
-      maximumScale: 20,
-    },
-    path: {
-      leadTime: 0,
-      resolution: 1,
-      material: new Cesium.PolylineGlowMaterialProperty({
-        glowPower: 0.1,
-        color: Cesium.Color.AQUA
-      }),
-      width: 8
-    }
-  })
-  //修改时间轴的当前时间
-  viewer.clock.currentTime = Cesium.JulianDate.fromDate(startTime)
-  viewer.clock.stopTime = Cesium.JulianDate.fromDate(new Date(stopTime))
-  viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP//运行一遍
-  viewer.clock.shouldAnimate = true//开始播放
-
-  // 聚焦到模型
-  // viewer.trackedEntity = obj.glbPathBack;
-  viewer.zoomTo(obj.line)
+// 创建标签
+const createDiv = (div, name, pos, type) => {
+  div.className = 'tips';
+  div.style.display = type || 'none';
+  div.style.position = 'absolute';
+  div.style.color = 'white';
+  div.style.padding = '4px'
+  div.style["pointer-events"] = "none"//禁用点击事件
+  div.style.backgroundColor = 'black';
+  div.style.bottom = `${viewer.scene.canvas.clientHeight - pos.y}px`
+  div.style.left = `${pos.x}px`
+  div.textContent = name
 }
+// 高亮显示
+function highLight() {
+  //定义一个空的entity
+  const selectedEntity = new Cesium.Entity();
+  console.log('@@@selectedEntity:', selectedEntity);
+  //判断浏览器是否支持边缘检测
+  if (Cesium.PostProcessStageLibrary.isSilhouetteSupported(viewer.scene)) {
+    // 创建一个边缘检测的效果
+    silhouetteBlue = Cesium.PostProcessStageLibrary.createEdgeDetectionStage();
+    // 设置边缘的颜色
+    silhouetteBlue.uniforms.color = Cesium.Color.BLUE;
+    // 设置边缘的长度
+    silhouetteBlue.uniforms.length = 0.01;
+    // 设置选中的对象
+    silhouetteBlue.selected = [];
+    // 添加到场景中
+    viewer.scene.postProcessStages.add(
+      Cesium.PostProcessStageLibrary.createSilhouetteStage([
+        silhouetteBlue,
+      ]),
+    );
+  }
+}
+
+
 
 
 
@@ -265,6 +203,13 @@ onMounted(() => {
 
   });
 
+  div = document.createElement("div");//创建div
+  viewer.container.appendChild(div);//添加到当前容器中
+
+
+  highLight()
+
+
   // 深度检测
   viewer.scene.globe.depthTestAgainstTerrain = true
   //相机
@@ -276,16 +221,34 @@ onMounted(() => {
       roll: Cesium.Math.toRadians(0),//表示绕 Y 轴旋转,控制物体的倾斜或翻转。
     }
   })
+
+
+
+
+
+
+
+
   // 点击事件 
   let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
   handler.setInputAction(e => {
-    let pick = viewer.scene.pick(e.position);
-    if (Cesium.defined(pick)) {
-      console.log('@@@点击选中pick:', pick.id);
-      alert('选中name：' + pick.id.name);
+    // 获取点击的对象
+    silhouetteBlue.selected = []
 
+    let pick = viewer.scene.pick(e.endPosition);
+    // console.log('@@@e.endPosition:', e.endPosition);
+    // console.log('@@@:clientHeight', viewer.scene.canvas.clientHeight);
+    if (!Cesium.defined(pick)) {
+      createDiv(div, '', e.endPosition, 'none')
     }
-  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+    if (Cesium.defined(pick)) {
+      console.log('@@选中pick:', pick);
+      const name = pick.getProperty('BIN')
+      createDiv(div, name, e.endPosition, 'block')
+      silhouetteBlue.selected = [pick];
+    }
+  }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
 });
 

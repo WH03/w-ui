@@ -33,6 +33,8 @@ let url = '/3dtiles/park/tileset.json'
 
 let div;//创建div
 let silhouetteBlue;//边缘检测对象
+let silhouetteGreen;//边缘检测对象
+let selectedEntity;
 // 添加模型
 const addmodel3dTiles = async () => {
   try {
@@ -94,7 +96,9 @@ const addmodel3dTilesMore = async () => {
       },
       show: '${Height}>=0'
     })
+    viewer.zoomTo(obj.models)
   })
+
 }
 
 
@@ -163,7 +167,7 @@ const createDiv = (div, name, pos, type) => {
 // 高亮显示
 function highLight() {
   //定义一个空的entity
-  const selectedEntity = new Cesium.Entity();
+  selectedEntity = new Cesium.Entity();
   console.log('@@@selectedEntity:', selectedEntity);
   //判断浏览器是否支持边缘检测
   if (Cesium.PostProcessStageLibrary.isSilhouetteSupported(viewer.scene)) {
@@ -175,10 +179,20 @@ function highLight() {
     silhouetteBlue.uniforms.length = 0.01;
     // 设置选中的对象
     silhouetteBlue.selected = [];
+
+    // 
+    silhouetteGreen =
+      Cesium.PostProcessStageLibrary.createEdgeDetectionStage();
+    silhouetteGreen.uniforms.color = Cesium.Color.LIME;
+    silhouetteGreen.uniforms.length = 0.01;
+    silhouetteGreen.selected = [];
+
+
     // 添加到场景中
     viewer.scene.postProcessStages.add(
       Cesium.PostProcessStageLibrary.createSilhouetteStage([
         silhouetteBlue,
+        silhouetteGreen
       ]),
     );
   }
@@ -225,16 +239,11 @@ onMounted(() => {
 
 
 
-
-
-
-
   // 点击事件 
   let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
   handler.setInputAction(e => {
     // 获取点击的对象
     silhouetteBlue.selected = []
-
     let pick = viewer.scene.pick(e.endPosition);
     // console.log('@@@e.endPosition:', e.endPosition);
     // console.log('@@@:clientHeight', viewer.scene.canvas.clientHeight);
@@ -249,6 +258,31 @@ onMounted(() => {
       silhouetteBlue.selected = [pick];
     }
   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+  //点击事件
+  let clickHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  clickHandler.setInputAction(e => {
+
+    silhouetteGreen.selected = [];
+    let pick = viewer.scene.pick(e.position);
+    if (!Cesium.defined(pick)) {
+      return
+    }
+    // 
+    if (silhouetteGreen.selected[0] == pick) {
+      return
+    }
+
+    const highLightModel = silhouetteBlue.selected[0]
+    if (pick === highLightModel) {
+      silhouetteBlue.selected = [];
+    }
+
+    silhouetteGreen.selected = [pick];
+
+    viewer.selectedEntity = selectedEntity;
+
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
 });
 

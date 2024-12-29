@@ -264,14 +264,12 @@ onMounted(() => {
   clickHandler.setInputAction(e => {
 
     silhouetteGreen.selected = [];
+    // 如果没有拾取到，直接返回
     let pick = viewer.scene.pick(e.position);
     if (!Cesium.defined(pick)) {
       return
     }
-    // 
-    if (silhouetteGreen.selected[0] == pick) {
-      return
-    }
+
 
     const highLightModel = silhouetteBlue.selected[0]
     if (pick === highLightModel) {

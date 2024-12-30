@@ -270,8 +270,10 @@ onMounted(() => {
       return
     }
 
-
+    // 设置为绿色的
     const highLightModel = silhouetteBlue.selected[0]
+
+    // 如果和蓝色状态相同，取消蓝色的
     if (pick === highLightModel) {
       silhouetteBlue.selected = [];
     }

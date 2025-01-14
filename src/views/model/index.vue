@@ -236,7 +236,7 @@ onMounted(() => {
     }
   })
 
-
+  const annotations = viewer.scene.primitives.add(new Cesium.LabelCollection())
 
 
   // 点击事件 
@@ -252,7 +252,7 @@ onMounted(() => {
     }
 
     if (Cesium.defined(pick)) {
-      console.log('@@选中pick:', pick);
+      // console.log('@@选中pick:', pick);
       const name = pick.getProperty('BIN')
       createDiv(div, name, e.endPosition, 'block')
       silhouetteBlue.selected = [pick];
@@ -272,7 +272,6 @@ onMounted(() => {
 
     // 设置为绿色的
     const highLightModel = silhouetteBlue.selected[0]
-
     // 如果和蓝色状态相同，取消蓝色的
     if (pick === highLightModel) {
       silhouetteBlue.selected = [];
@@ -283,6 +282,28 @@ onMounted(() => {
     viewer.selectedEntity = selectedEntity;
 
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
+
+  // 右键方法
+  let rightClick = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
+  rightClick.setInputAction(e => {
+
+    let pick = viewer.scene.pickPosition(e.position)
+    if (Cesium.defined(pick)) {
+      const cartographic = Cesium.Cartographic.fromCartesian(pick)
+      // console.log('@@@cartographic:', cartographic)
+      const height = `${cartographic.height.toFixed(2)}m`
+
+      annotations.add({
+        position: pick,
+        text: height,
+        showBackground: true,
+        font: '14px',
+        horizontalOrigin: Cesium.HorizontalOrigin.LEFT,//相对于对象的原点的水平位置
+        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,//相对于对象的原点的垂直位置
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,//根据与相机的距离确定可见性。
+      })
+    }
+  }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
 
 });
 
